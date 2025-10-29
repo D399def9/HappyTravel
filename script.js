@@ -287,19 +287,44 @@
     const out = $("#bookingLinks");
     if(!out) return;
     out.innerHTML = "";
-    const list = BOOKING_LINKS_BY_COUNTRY[country];
+
+    // determine country: explicit arg > select value > try parse toInput > default to Italy
+    const select = document.getElementById("countrySelect");
+    const toVal = (document.getElementById("toInput") || {}).value || "";
+    let chosen = country || (select && select.value) || "";
+    if(!chosen && toVal){
+      // try to extract a country-like last token (simple heuristic)
+      const parts = toVal.split(",").map(s=>s.trim()).filter(Boolean);
+      chosen = parts.length ? parts[parts.length-1] : "";
+    }
+    if(!chosen) chosen = "Italy";
+
+    const list = BOOKING_LINKS_BY_COUNTRY[chosen];
     if(!list || !list.length) {
-      out.innerHTML = `<div class="muted">No vendor list for "${country}". Choose another country or try a global search.</div>`;
+      out.innerHTML = `<div class="muted">No vendor list for "${escapeHtml(chosen)}". Try selecting a different country.</div>`;
       return;
     }
     list.forEach(item=>{
       const a=document.createElement("a");
       a.className="link-card";
       a.href=item.url; a.target="_blank"; a.rel="noopener noreferrer";
-      a.innerHTML = `<div class="link-title">${escapeHtml(item.name)}</div><div class="small muted">${(new URL(item.url)).hostname}</div>`;
+      a.innerHTML = `<div class="link-title">${escapeHtml(item.name)}</div><div class="small muted">${escapeHtml((new URL(item.url)).hostname)}</div>`;
       out.appendChild(a);
     });
   }
+
+  // wire country select to update links
+  document.addEventListener("DOMContentLoaded", () => {
+    const countrySelect = document.getElementById("countrySelect");
+    if(countrySelect){
+      countrySelect.addEventListener("change", ()=> renderBookingLinks(countrySelect.value));
+    }
+    // optionally update when "to" input changes
+    const toInput = document.getElementById("toInput");
+    if(toInput){
+      toInput.addEventListener("change", ()=> renderBookingLinks()); // uses heuristic to pick country from toInput
+    }
+  });
 
   /* ========== GOOGLE MAPS (lazy load) ========= */
   function loadGoogleMapsIfNeeded(cb){

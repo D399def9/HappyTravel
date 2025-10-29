@@ -122,15 +122,20 @@ html, body {
 
 /* --- BOOKING LINK CARD --- */
 .link-card {
-  display:block;
-  padding:12px;
-  border-radius:8px;
-  margin-bottom:8px;
-  background:rgba(255,255,255,0.85);
-  box-shadow:0 6px 18px rgba(0,0,0,0.06);
-  text-decoration:none;
-  color:inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--card-bg, rgba(255,255,255,0.95));
+  box-shadow: var(--shadow, 0 6px 18px rgba(0,0,0,0.06));
+  text-decoration: none;
+  color: inherit;
+  min-width: 200px;
+  max-width: 320px;
 }
+.link-card .link-title { font-weight:600; margin-bottom:6px; }
+.link-card .small.muted { font-size:12px; color:var(--muted,#666); }
 
 /* --- TOAST --- */
 .toast {
@@ -639,4 +644,13 @@ footer {
 }
 #fav-list .fav-actions button { margin-left:8px; }
 #fav-empty { color:#666; margin-top:8px; }
+
+/* Booking links grid */
+#bookingLinks.booking-grid,
+#bookingLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: stretch;
+}
 
