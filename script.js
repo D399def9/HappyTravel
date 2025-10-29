@@ -21,11 +21,17 @@
   ];
 
   const BOOKING_LINKS_BY_COUNTRY = {
-    Italy: [{name:"Trenitalia",url:"https://www.trenitalia.com/"} ,{name:"Italo",url:"https://www.italotreno.it/"}],
-    France: [{name:"SNCF",url:"https://www.sncf.com/"}],
-    Germany: [{name:"Deutsche Bahn",url:"https://www.bahn.com/en"}],
-    Spain: [{name:"Renfe",url:"https://www.renfe.com/"}],
-    "United Kingdom": [{name:"National Rail",url:"https://www.nationalrail.co.uk/"}]
+    Italy: [
+      { name: "Trenitalia (trains)", url: "https://www.trenitalia.com/" },
+      { name: "Italo (high-speed trains)", url: "https://www.italotreno.it/" },
+      { name: "FlixBus (intercity buses)", url: "https://www.flixbus.com/" },
+      { name: "Busitalia (regional buses)", url: "https://www.fsbusitalia.it/" },
+      { name: "Free Now (taxi & rides)", url: "https://www.freenow.com/" }
+    ],
+    France: [{ name: "SNCF", url: "https://www.sncf.com/" }],
+    Germany: [{ name: "Deutsche Bahn", url: "https://www.bahn.com/en" }],
+    Spain: [{ name: "Renfe", url: "https://www.renfe.com/" }],
+    "United Kingdom": [{ name: "National Rail", url: "https://www.nationalrail.co.uk/" }]
   };
   const MAP_STYLE_SILVER = [
     { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
