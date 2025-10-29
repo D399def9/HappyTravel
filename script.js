@@ -123,6 +123,18 @@
     toast._timer = setTimeout(()=>el.classList.remove("visible"), t);
   }
 
+  // preload helper — resolves with list of {url,ok}
+  function preloadImages(urls, timeout = 8000) {
+    return Promise.all(urls.map(url => new Promise(resolve => {
+      const img = new Image();
+      let done = false;
+      img.onload = () => { if (!done) { done = true; resolve({ url, ok: true }); } };
+      img.onerror = () => { if (!done) { done = true; resolve({ url, ok: false }); } };
+      img.src = url;
+      setTimeout(() => { if (!done) { done = true; resolve({ url, ok: false }); } }, timeout);
+    })));
+  }
+
   /* ========== HERO BACKGROUND ========== */
   function setHeroImage(url){
     const hero = $(".hero-visual");
