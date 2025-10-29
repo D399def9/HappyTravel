@@ -137,30 +137,32 @@
     heroInterval = setInterval(nextHeroImage, 10000);
   }
 
-  // --- Favorites (simple localStorage) ---
+  // --- Favorites (localStorage) ---
   const FAV_KEY = "ht_favorites";
 
   function getFavorites() {
-    try {
-      return JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
-    } catch (e) {
-      return [];
-    }
+    try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); }
+    catch (e) { return []; }
   }
 
   function saveFavorite(from, to) {
-    if (!from || !to) return;
+    if (!from || !to) return false;
     const favs = getFavorites();
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2,8);
     favs.unshift({ id, from, to, created: Date.now() });
     localStorage.setItem(FAV_KEY, JSON.stringify(favs));
     renderFavList();
+    return true;
   }
 
   function deleteFavorite(id) {
     const favs = getFavorites().filter(f => f.id !== id);
     localStorage.setItem(FAV_KEY, JSON.stringify(favs));
     renderFavList();
+  }
+
+  function escapeHtml(s = "") {
+    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
   }
 
   function renderFavList() {
@@ -170,10 +172,10 @@
     const favs = getFavorites();
     listEl.innerHTML = "";
     if (!favs.length) {
-      emptyEl && (emptyEl.style.display = "block");
+      if (emptyEl) emptyEl.style.display = "block";
       return;
     }
-    emptyEl && (emptyEl.style.display = "none");
+    if (emptyEl) emptyEl.style.display = "none";
     favs.forEach(f => {
       const item = document.createElement("div");
       item.className = "fav-item";
@@ -184,13 +186,12 @@
         </div>
         <div class="fav-actions">
           <button class="btn ghost load-fav" data-id="${f.id}">Load</button>
-          <button class="btn" title="Delete" data-id="${f.id}">Delete</button>
+          <button class="btn del-fav" data-id="${f.id}">Delete</button>
         </div>
       `;
       listEl.appendChild(item);
     });
 
-    // attach handlers
     listEl.querySelectorAll(".load-fav").forEach(b => {
       b.addEventListener("click", (ev) => {
         const id = ev.currentTarget.dataset.id;
@@ -200,12 +201,12 @@
         const toEl = document.getElementById("toInput");
         if (fromEl) fromEl.value = fav.from;
         if (toEl) toEl.value = fav.to;
-        // open map + show route
         calculateAndDisplayRoute(fav.from, fav.to);
         closeFavDrawer();
       });
     });
-    listEl.querySelectorAll(".fav-actions button[title='Delete']").forEach(b => {
+
+    listEl.querySelectorAll(".del-fav").forEach(b => {
       b.addEventListener("click", (ev) => {
         const id = ev.currentTarget.dataset.id;
         deleteFavorite(id);
@@ -227,12 +228,7 @@
     d.setAttribute("aria-hidden", "true");
   }
 
-  // small helper
-  function escapeHtml(s = "") {
-    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-  }
-
-  // wire up UI once DOM ready
+  // wire favorites UI after DOM ready
   document.addEventListener("DOMContentLoaded", () => {
     const favBtn = document.getElementById("favoritesBtn");
     if (favBtn) favBtn.addEventListener("click", openFavDrawer);
@@ -240,19 +236,17 @@
     const closeFav = document.getElementById("closeFav");
     if (closeFav) closeFav.addEventListener("click", closeFavDrawer);
 
-    // quick-save: SHIFT+click favoritesBtn to save current route
-    if (favBtn) {
-      favBtn.addEventListener("click", (ev) => {
-        if (ev.shiftKey) {
-          const from = document.getElementById("fromInput").value.trim();
-          const to = document.getElementById("toInput").value.trim();
-          if (!from || !to) {
-            toast("Enter origin and destination first to save.");
-            return;
-          }
-          saveFavorite(from, to);
-          toast("Route saved to favorites");
+    const saveBtn = document.getElementById("saveFavBtn");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => {
+        const from = (document.getElementById("fromInput") || {}).value || "";
+        const to = (document.getElementById("toInput") || {}).value || "";
+        if (!from || !to) {
+          toast("Enter origin and destination first.");
+          return;
         }
+        if (saveFavorite(from, to)) toast("Saved to favorites");
+        else toast("Failed to save");
       });
     }
 
