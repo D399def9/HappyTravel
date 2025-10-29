@@ -11,11 +11,13 @@
   /* ========== CONFIG ========== */
   const GOOGLE_MAPS_API_KEY = "AIzaSyD8A_7lUl-1Ol0lrisznF5xGaCHdVUBsKU"; // <-- Only one declaration!
   const TRAVEL_IMAGES = [
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1600&q=80"
+    // Unsplash dynamic queries — returns varied travel photos (train stations, cityscapes, landmarks, airports)
+    "https://source.unsplash.com/1600x900/?travel,train,station",
+    "https://source.unsplash.com/1600x900/?travel,city,skyline",
+    "https://source.unsplash.com/1600x900/?travel,landmark,architecture",
+    "https://source.unsplash.com/1600x900/?travel,airport,terminal",
+    "https://source.unsplash.com/1600x900/?travel,backpack,street",
+    "https://source.unsplash.com/1600x900/?travel,mountains,road"
   ];
   const BOOKING_LINKS_BY_COUNTRY = {
     Italy: [{name:"Trenitalia",url:"https://www.trenitalia.com/"} ,{name:"Italo",url:"https://www.italotreno.it/"}],
