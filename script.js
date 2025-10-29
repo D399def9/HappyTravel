@@ -25,8 +25,8 @@
       { name: "Trenitalia (trains)", url: "https://www.trenitalia.com/" },
       { name: "Italo (high-speed trains)", url: "https://www.italotreno.it/" },
       { name: "FlixBus (intercity buses)", url: "https://www.flixbus.com/" },
-      { name: "Busitalia (regional buses)", url: "https://www.fsbusitalia.it/" },
-      { name: "Free Now (taxi & rides)", url: "https://www.freenow.com/" }
+      { name: "ASF Autolinee (regional buses)", url: "https://www.asfautolinee.it/" }, // updated
+      { name: "Transfeero (taxi & transfers)", url: "https://www.transfeero.com/en/country/italy/?source=ads&utm_source=gads&utm_term=&gad_source=1&gad_campaignid=9965923085&gbraid=0AAAAACZt_NQS3EJNhkXJ2d5kicoTMyuo3&gclid=Cj0KCQjw9obIBhCAARIsAGHm1mTOUdld6GmPNuOZ43ofQaOCZTu45zivN3GosA-hZ52191TDgjRBYigaAvF0EALw_wcB" } // updated
     ],
     France: [{ name: "SNCF", url: "https://www.sncf.com/" }],
     Germany: [{ name: "Deutsche Bahn", url: "https://www.bahn.com/en" }],
