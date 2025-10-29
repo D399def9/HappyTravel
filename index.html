@@ -93,6 +93,31 @@
     <p>Made with ❤️ by Happy Travel · <span id="visitorCount">2,500</span> travelers this week</p>
   </footer>
 
+  <!-- Sign-in Modal -->
+  <div id="signInModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button id="closeSignIn" class="btn ghost" aria-label="Close">Close</button>
+      <h3>Sign In</h3>
+      <form id="signInForm" class="signin-form">
+        <label>
+          <span class="muted">Name</span>
+          <input type="text" id="signInName" placeholder="Your name" required>
+        </label>
+        <label>
+          <span class="muted">Email</span>
+          <input type="email" id="signInEmail" placeholder="you@example.com" required>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="signInSubscribe" checked>
+          <span>Subscribe to the newsletter</span>
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="favoritesDrawer" class="drawer" aria-hidden="true">
     <button id="closeFav" class="btn ghost">Close</button>
     <h3>Your favorites</h3>

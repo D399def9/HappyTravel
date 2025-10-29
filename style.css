@@ -654,3 +654,44 @@ footer {
   align-items: stretch;
 }
 
+/* Sign-in modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,10,10,0.45);
+  z-index: 1200;
+  padding: 20px;
+}
+.modal[aria-hidden="false"],
+.modal.open { display:flex; }
+
+.modal-content {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card-bg, rgba(255,255,255,0.96));
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+}
+
+.signin-form label { display:block; margin-bottom:12px; }
+.signin-form input[type="text"],
+.signin-form input[type="email"] {
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.08);
+  margin-top:6px;
+  box-sizing:border-box;
+}
+.checkbox-row { display:flex; align-items:center; gap:10px; margin:8px 0 14px; }
+.form-actions { display:flex; justify-content:flex-end; gap:10px; }
+
+/* small responsive tweak */
+@media (max-width:480px) {
+  .modal-content { padding:16px; border-radius:10px; }
+}
+

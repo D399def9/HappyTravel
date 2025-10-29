@@ -469,4 +469,89 @@
     });
   }
 
+  // --- Simple Sign In + newsletter opt-in ---
+  function openSignInModal(){
+    const m = document.getElementById("signInModal");
+    if(!m) return;
+    m.classList.add("open");
+    m.setAttribute("aria-hidden","false");
+  }
+  function closeSignInModal(){
+    const m = document.getElementById("signInModal");
+    if(!m) return;
+    m.classList.remove("open");
+    m.setAttribute("aria-hidden","true");
+  }
+
+  function updateAuthUI(){
+    const authBtn = document.getElementById("authBtn");
+    const user = JSON.parse(localStorage.getItem("ht_user") || "null");
+    if(authBtn){
+      if(user && user.name){
+        authBtn.textContent = `Hi, ${user.name}`;
+        authBtn.classList.add("signed-in");
+      } else {
+        authBtn.textContent = "Sign In";
+        authBtn.classList.remove("signed-in");
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const authBtn = document.getElementById("authBtn");
+    const signInForm = document.getElementById("signInForm");
+    const closeSignIn = document.getElementById("closeSignIn");
+
+    if(authBtn){
+      authBtn.addEventListener("click", () => {
+        const user = JSON.parse(localStorage.getItem("ht_user") || "null");
+        if(user && user.email){
+          // act as sign out
+          localStorage.removeItem("ht_user");
+          toast("Signed out");
+          updateAuthUI();
+        } else {
+          openSignInModal();
+        }
+      });
+    }
+
+    if(closeSignIn) closeSignIn.addEventListener("click", closeSignInModal);
+
+    if(signInForm){
+      signInForm.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        const name = (document.getElementById("signInName") || {}).value.trim();
+        const email = (document.getElementById("signInEmail") || {}).value.trim();
+        const subscribe = !!document.getElementById("signInSubscribe").checked;
+        if(!email || !name) {
+          toast("Please provide name and email.");
+          return;
+        }
+        // store simple session
+        localStorage.setItem("ht_user", JSON.stringify({ name, email, created: Date.now() }));
+        toast(`Welcome, ${name}`);
+        updateAuthUI();
+        closeSignInModal();
+
+        // if user opted in — submit the newsletter form programmatically (uses your existing handler)
+        const newsletterForm = document.getElementById("newsletterForm");
+        const newsletterEmail = document.getElementById("newsletterEmail");
+        if(subscribe && newsletterForm && newsletterEmail){
+          newsletterEmail.value = email;
+          // requestSubmit will trigger the form submit listeners
+          if(typeof newsletterForm.requestSubmit === "function"){
+            newsletterForm.requestSubmit();
+          } else {
+            // fallback: dispatch submit event
+            newsletterForm.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+          }
+        }
+      });
+    }
+
+    // initialize UI state
+    updateAuthUI();
+  });
+
 })();
