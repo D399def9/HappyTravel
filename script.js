@@ -227,6 +227,38 @@
     d.setAttribute("aria-hidden", "true");
   }
 
+  // small helper
+  function escapeHtml(s = "") {
+    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+  }
+
+  // wire up UI once DOM ready
+  document.addEventListener("DOMContentLoaded", () => {
+    const favBtn = document.getElementById("favoritesBtn");
+    if (favBtn) favBtn.addEventListener("click", openFavDrawer);
+
+    const closeFav = document.getElementById("closeFav");
+    if (closeFav) closeFav.addEventListener("click", closeFavDrawer);
+
+    // quick-save: SHIFT+click favoritesBtn to save current route
+    if (favBtn) {
+      favBtn.addEventListener("click", (ev) => {
+        if (ev.shiftKey) {
+          const from = document.getElementById("fromInput").value.trim();
+          const to = document.getElementById("toInput").value.trim();
+          if (!from || !to) {
+            toast("Enter origin and destination first to save.");
+            return;
+          }
+          saveFavorite(from, to);
+          toast("Route saved to favorites");
+        }
+      });
+    }
+
+    renderFavList();
+  });
+
   /* ========== BOOKING LINKS ========= */
   function renderBookingLinks(country){
     const out = $("#bookingLinks");
