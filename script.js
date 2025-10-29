@@ -534,18 +534,9 @@
         updateAuthUI();
         closeSignInModal();
 
-        // if user opted in — submit the newsletter form programmatically (uses your existing handler)
-        const newsletterForm = document.getElementById("newsletterForm");
-        const newsletterEmail = document.getElementById("newsletterEmail");
-        if(subscribe && newsletterForm && newsletterEmail){
-          newsletterEmail.value = email;
-          // requestSubmit will trigger the form submit listeners
-          if(typeof newsletterForm.requestSubmit === "function"){
-            newsletterForm.requestSubmit();
-          } else {
-            // fallback: dispatch submit event
-            newsletterForm.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-          }
+        // if user opted in — subscribe immediately without scrolling
+        if (subscribe && email) {
+          subscribeEmail(email);
         }
       });
     }
@@ -553,5 +544,30 @@
     // initialize UI state
     updateAuthUI();
   });
+
+  // ===== NEWSLETTER LOGIC =====
+  // helper to subscribe without needing to submit the form (no scrolling)
+  function subscribeEmail(email) {
+    if (!email) return;
+    const successMsg = document.querySelector(".success-msg");
+    if (successMsg) {
+      successMsg.classList.remove("hidden");
+      setTimeout(() => successMsg.classList.add("hidden"), 4000);
+    }
+    const newsletterEmail = document.getElementById("newsletterEmail");
+    if (newsletterEmail) newsletterEmail.value = "";
+    // TODO: send `email` to server / API when backend available
+  }
+
+  const newsletterForm = document.getElementById("newsletterForm");
+  if (newsletterForm) {
+    newsletterForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const newsletterEmail = document.getElementById("newsletterEmail");
+      const email = (newsletterEmail && newsletterEmail.value || "").trim();
+      if (!email) return;
+      subscribeEmail(email);
+    });
+  }
 
 })();
