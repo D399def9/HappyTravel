@@ -625,3 +625,18 @@ footer {
   100% { opacity: 1; transform: translateY(0); }
 }
 
+/* favorites */
+#fav-list .fav-item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px;
+  border-radius:10px;
+  background: rgba(255,255,255,0.95);
+  margin-bottom:8px;
+  box-shadow: var(--shadow);
+}
+#fav-list .fav-actions button { margin-left:8px; }
+#fav-empty { color:#666; margin-top:8px; }
+

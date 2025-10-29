@@ -137,27 +137,94 @@
     heroInterval = setInterval(nextHeroImage, 10000);
   }
 
-  /* ========== FAVORITES (localStorage) ========== */
-  const FAV_KEY = "ht_favs_v1";
-  function getFavorites(){ return safeJSONParse(localStorage.getItem(FAV_KEY), []); }
-  function setFavorites(arr){ localStorage.setItem(FAV_KEY, JSON.stringify(arr)); }
-  function saveFav(route){ const arr = getFavorites(); arr.unshift(route); setFavorites(arr.slice(0,50)); toast("Saved to favorites"); }
-  function renderFavList(){
-    const list = getFavorites();
-    const container = $("#fav-list");
-    if(!container) return;
-    container.innerHTML = "";
-    if(!list.length){ container.innerHTML = `<div class="muted">No favorites yet.</div>`; return; }
-    list.forEach((it,i)=>{
-      const item = document.createElement("div"); item.className="fav-entry";
-      item.innerHTML = `<div class="fav-route"><strong>${escapeHtml(it.from)}</strong> → <strong>${escapeHtml(it.to)}</strong>
-        <div class="small muted">${new Date(it.timestamp).toLocaleString()}</div></div>
+  // --- Favorites (simple localStorage) ---
+  const FAV_KEY = "ht_favorites";
+
+  function getFavorites() {
+    try {
+      return JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveFavorite(from, to) {
+    if (!from || !to) return;
+    const favs = getFavorites();
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+    favs.unshift({ id, from, to, created: Date.now() });
+    localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+    renderFavList();
+  }
+
+  function deleteFavorite(id) {
+    const favs = getFavorites().filter(f => f.id !== id);
+    localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+    renderFavList();
+  }
+
+  function renderFavList() {
+    const listEl = document.getElementById("fav-list");
+    const emptyEl = document.getElementById("fav-empty");
+    if (!listEl) return;
+    const favs = getFavorites();
+    listEl.innerHTML = "";
+    if (!favs.length) {
+      emptyEl && (emptyEl.style.display = "block");
+      return;
+    }
+    emptyEl && (emptyEl.style.display = "none");
+    favs.forEach(f => {
+      const item = document.createElement("div");
+      item.className = "fav-item";
+      item.innerHTML = `
+        <div class="fav-meta">
+          <strong>${escapeHtml(f.from)} → ${escapeHtml(f.to)}</strong>
+          <div class="muted" style="font-size:12px">saved</div>
+        </div>
         <div class="fav-actions">
-          <button class="btn small" data-idx="${i}" data-act="load">Load</button>
-          <button class="btn ghost small" data-idx="${i}" data-act="del">Delete</button>
-        </div>`;
-      container.appendChild(item);
+          <button class="btn ghost load-fav" data-id="${f.id}">Load</button>
+          <button class="btn" title="Delete" data-id="${f.id}">Delete</button>
+        </div>
+      `;
+      listEl.appendChild(item);
     });
+
+    // attach handlers
+    listEl.querySelectorAll(".load-fav").forEach(b => {
+      b.addEventListener("click", (ev) => {
+        const id = ev.currentTarget.dataset.id;
+        const fav = getFavorites().find(x => x.id === id);
+        if (!fav) return;
+        const fromEl = document.getElementById("fromInput");
+        const toEl = document.getElementById("toInput");
+        if (fromEl) fromEl.value = fav.from;
+        if (toEl) toEl.value = fav.to;
+        // open map + show route
+        calculateAndDisplayRoute(fav.from, fav.to);
+        closeFavDrawer();
+      });
+    });
+    listEl.querySelectorAll(".fav-actions button[title='Delete']").forEach(b => {
+      b.addEventListener("click", (ev) => {
+        const id = ev.currentTarget.dataset.id;
+        deleteFavorite(id);
+      });
+    });
+  }
+
+  function openFavDrawer() {
+    const d = document.getElementById("favoritesDrawer");
+    if (!d) return;
+    d.classList.add("open");
+    d.setAttribute("aria-hidden", "false");
+    renderFavList();
+  }
+  function closeFavDrawer() {
+    const d = document.getElementById("favoritesDrawer");
+    if (!d) return;
+    d.classList.remove("open");
+    d.setAttribute("aria-hidden", "true");
   }
 
   /* ========== BOOKING LINKS ========= */
@@ -312,4 +379,4 @@
     });
   }
 
-})(); 
+})();
