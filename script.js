@@ -285,18 +285,28 @@
 
   /* ========== GOOGLE MAPS (lazy load) ========= */
   function loadGoogleMapsIfNeeded(cb){
+    console.log("[HT] loadGoogleMapsIfNeeded called, isMapLoaded:", isMapLoaded);
     if(isMapLoaded){ cb && cb(); return; }
-    if(!GOOGLE_MAPS_API_KEY){ toast("Google Maps API key not set — static preview only."); renderStaticMapPreview(); return; }
-    if(document.querySelector('script[src*="maps.googleapis.com"]')){
-      cb && cb();
+    if(!GOOGLE_MAPS_API_KEY){
+      console.warn("[HT] Google Maps API key not set");
+      toast("Google Maps API key not set — static preview only.");
+      renderStaticMapPreview();
+      return;
+    }
+    const existing = document.querySelector('script[src*="maps.googleapis.com"]');
+    if(existing){
+      console.log("[HT] Google Maps script already present — waiting for load");
+      existing.addEventListener("load", ()=> initMap(cb));
+      existing.addEventListener("error", ()=> { console.error("[HT] existing maps script error"); toast("Failed to load Google Maps."); renderStaticMapPreview(); });
       return;
     }
     const s = document.createElement("script");
     s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&libraries=places`;
     s.defer = true;
-    s.onload = ()=> initMap(cb);
-    s.onerror = ()=> { toast("Failed to load Google Maps."); renderStaticMapPreview(); };
+    s.onload = ()=> { console.log("[HT] Google Maps script loaded"); initMap(cb); };
+    s.onerror = ()=> { console.error("[HT] Failed to load Google Maps script"); toast("Failed to load Google Maps."); renderStaticMapPreview(); };
     document.body.appendChild(s);
+    console.log("[HT] appended Google Maps script:", s.src);
   }
   function initMap(cb){
     if(!$("#map")) return;
