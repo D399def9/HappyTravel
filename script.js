@@ -255,18 +255,38 @@
 
   document.addEventListener("DOMContentLoaded", initAutocomplete);
 
-  const showRouteBtn = document.getElementById("showRouteBtn");
-  if (showRouteBtn) {
-    showRouteBtn.addEventListener("click", () => {
-      const from = document.getElementById("fromInput").value.trim();
-      const to = document.getElementById("toInput").value.trim();
-      if (!from || !to) {
-        toast("Please enter both origin and destination.");
-        return;
-      }
-      calculateAndDisplayRoute(from, to);
-    });
-  }
+  document.addEventListener("DOMContentLoaded", () => {
+    const showRouteBtn = document.getElementById("showRouteBtn");
+    if (showRouteBtn) {
+      showRouteBtn.addEventListener("click", () => {
+        const from = document.getElementById("fromInput").value.trim();
+        const to = document.getElementById("toInput").value.trim();
+        if (!from || !to) {
+          toast("Please enter both origin and destination.");
+          return;
+        }
+        calculateAndDisplayRoute(from, to);
+      });
+    }
+
+    const clearBtn = document.getElementById("clearBtn");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        const fromEl = document.getElementById("fromInput");
+        const toEl = document.getElementById("toInput");
+        if (fromEl) fromEl.value = "";
+        if (toEl) toEl.value = "";
+        if (directionsRenderer) directionsRenderer.setDirections({ routes: [] });
+        currentRoute = null;
+        toast("Cleared");
+      });
+    }
+
+    const showStopsBtn = document.getElementById("showStopsBtn");
+    if (showStopsBtn) {
+      showStopsBtn.addEventListener("click", showNearbyStops);
+    }
+  });
 
   function showNearbyStops() {
     if (!map) return;
@@ -291,7 +311,5 @@
       }
     });
   }
-
-  document.getElementById("showStopsBtn").addEventListener("click", showNearbyStops);
 
 })();
